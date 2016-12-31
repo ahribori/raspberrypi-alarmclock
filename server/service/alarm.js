@@ -6,13 +6,14 @@ const spawn = childProcess.spawn;
 export default class Alarm {
 
 	constructor() {
-		this.state = 'STOPPED';
-		this.alarm = {};
-		this.music = 'alarm.mp3';
-		this.rule = `0 0 7 * * *`;
-		console.log(this.rule);
-		this.setAlarm(this.rule);
-
+		this.state = 'LOADING';
+		this.setRandomMusic(() => {
+			this.state = 'STOPPED';
+			this.alarm = {};
+			this.rule = `0 0 7 * * *`;
+			console.log(this.rule);
+			this.setAlarm(this.rule);
+		});
 		/*
 		 *     *     *    *     *     *
 		 ┬    ┬    ┬    ┬    ┬    ┬
@@ -24,19 +25,6 @@ export default class Alarm {
 		 │    └──────────────────── minute (0 - 59)
 		 └───────────────────────── second (0 - 59, OPTIONAL)
 		 */
-
-		fs.readdir(process.cwd() + '/musics', (err, files) => {
-			if (err) {
-				throw new Error(err);
-			}
-			const numberOfFiles = files.length;
-			const randomIndex = Math.floor(Math.random() * numberOfFiles);
-			if (numberOfFiles > 0) {
-				this.music = files[randomIndex];
-			} else {
-				throw new Error('musics folder is empty.');
-			}
-		});
 	}
 
 	setAlarm(rule) {
@@ -82,12 +70,32 @@ export default class Alarm {
 		console.log('Event listener added.');
 	}
 
+	setRandomMusic(callback) {
+		fs.readdir(process.cwd() + '/musics', (err, files) => {
+			if (err) {
+				throw new Error(err);
+			}
+			const numberOfFiles = files.length;
+			const randomIndex = Math.floor(Math.random() * numberOfFiles);
+			if (numberOfFiles > 0) {
+				this.music = files[randomIndex];
+			} else {
+				throw new Error('musics folder is empty.');
+			}
+		});
+		if (typeof callback === 'function') {
+			callback();
+		}
+	}
+
 	play() {
-		if (this.state !== 'PLAYING') {
-			console.log('Play!', new Date());
-			this.state = 'PLAYING';
-			this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
-			this.addListener();
+		if (this.state !== ('PLAYING' || 'LOADING')) {
+			this.setRandomMusic(() => {
+				console.log('Play!', this.music, new Date());
+				this.state = 'PLAYING';
+				this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
+				this.addListener();
+			});
 		} else {
 			console.warn('Cannot play. Cause current state is', this.state);
 		}
