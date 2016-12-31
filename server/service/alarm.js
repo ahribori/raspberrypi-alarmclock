@@ -37,9 +37,9 @@ export default class Alarm {
 		if(this.alarm.cancel) {
 			this.alarm.cancel();
 		}
-		let rule = '0 ';
 		this.getAlarm((err, alarmList) => {
 			alarmList.map((alarm, key) => {
+				let rule = '0 ';
 				rule += alarm.minute + ' ';
 				rule += alarm.hour + ' * * ';
 				rule += alarm.dayOfWeek;
@@ -53,8 +53,8 @@ export default class Alarm {
 				alarm.dayOfWeek.map((day) => {
 					parsedDay.push(DAY[day]);
 				});
-				console.log(`RULE => ${rule}`);
-				console.log(`${parsedDay}요일 ${alarm.hour}시 ${alarm.minute}분 알람이 설정되었습니다.`)
+				console.log(`[${rule}]`);
+				console.log(`${parsedDay}요일 ${alarm.hour}시 ${alarm.minute}분 알람이 설정되었습니다.`);
 			});
 		});
 	}
@@ -80,7 +80,20 @@ export default class Alarm {
 	}
 
 	deleteAlarm(key) {
-
+		AlarmModel.remove({
+			_id: key
+		}, (err, result) => {
+			if (err) {
+				if (typeof callback === 'function') {
+					callback(err);
+				}
+				throw new Error(err);
+			} else {
+				if (typeof callback === 'function') {
+					callback(null, result);
+				}
+			}
+		});
 	}
 
 	getAlarm(callback) {

@@ -26,12 +26,12 @@ mongoose.connect('mongodb://192.168.0.200:27017/raspberrypi');
 // 	saveUninitialized: true
 // }));
 
+// app.use(morgan('dev'));
+app.use(bodyParser.json());
+
 /* setup routers & static directory */
 import route from './routes';
 app.use('/', route);
-
-// app.use(morgan('dev'));
-app.use(bodyParser.json());
 
 app.use('/', express.static(path.join(__dirname,'./../public')));
 

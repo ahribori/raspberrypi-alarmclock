@@ -10,6 +10,12 @@ router.get('/alarm', (req, res) => {
 	});
 });
 
+router.post('/alarm', (req, res) => {
+	let form = req.body;
+	alarm.saveAlarm(form.hour, form.minute, form.dayOfWeek);
+	res.json('success');
+});
+
 router.get('/play', (req, res) => {
 	alarm.play();
 	res.json('success!');
