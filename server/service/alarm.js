@@ -1,18 +1,19 @@
 import childProcess from 'child_process';
 import schedule from 'node-schedule';
 import fs from 'fs';
+import AlarmModel from '../models/alarm';
+
 const spawn = childProcess.spawn;
 
 export default class Alarm {
 
 	constructor() {
+		this.getAlarm();
 		this.state = 'LOADING';
 		this.setRandomMusic(() => {
 			this.state = 'STOPPED';
 			this.alarm = {};
-			this.rule = `0 0 7 * * *`;
-			console.log(this.rule);
-			this.setAlarm(this.rule);
+			this.setAlarm();
 		});
 		/*
 		 *     *     *    *     *     *
@@ -27,13 +28,75 @@ export default class Alarm {
 		 */
 	}
 
-	setAlarm(rule) {
+	setAlarm() {
+		const DAY = ['일', '월', '화', '수', '목', '금', '토', '일'];
+		this.scheduleList = [];
+		this.scheduleList.map((registeredSchedule) => {
+			registeredSchedule.cancel();
+		});
 		if(this.alarm.cancel) {
 			this.alarm.cancel();
 		}
-		this.alarm = schedule.scheduleJob(rule, () => {
-			console.log('현재 시각은', new Date());
-			this.play();
+		let rule = '0 ';
+		this.getAlarm((err, alarmList) => {
+			alarmList.map((alarm, key) => {
+				rule += alarm.minute + ' ';
+				rule += alarm.hour + ' * * ';
+				rule += alarm.dayOfWeek;
+				this.scheduleList.push(
+					schedule.scheduleJob(rule, () => {
+						console.log('현재 시각은', new Date());
+						this.play();
+					})
+				);
+				const parsedDay = [];
+				alarm.dayOfWeek.map((day) => {
+					parsedDay.push(DAY[day]);
+				});
+				console.log(`RULE => ${rule}`);
+				console.log(`${parsedDay}요일 ${alarm.hour}시 ${alarm.minute}분 알람이 설정되었습니다.`)
+			});
+		});
+	}
+
+	saveAlarm(hour=7, minute=0, dayOfWeek= [1, 2, 3, 4, 5, 6, 7], delay= 10, availability=true) {
+		new AlarmModel({
+			hour,
+			minute,
+			dayOfWeek,
+			delay,
+			availability
+		}).save((err, results) => {
+			if (err) {
+				console.error(err);
+			} else {
+				console.log(results);
+			}
+		});
+	}
+
+	updateAlarm() {
+
+	}
+
+	deleteAlarm(key) {
+
+	}
+
+	getAlarm(callback) {
+		AlarmModel.find({
+			availability: true
+		}, (err, results) => {
+			if (err) {
+				if (typeof callback === 'function') {
+					callback(err);
+				}
+				throw new Error(err);
+			} else {
+				if (typeof callback === 'function') {
+					callback(null, results);
+				}
+			}
 		});
 	}
 

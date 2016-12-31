@@ -6,6 +6,7 @@ const Alarm = new Schema({
 	hour: Number,
 	minute: Number,
 	dayOfWeek: [Number],
+	delay: Number,
 	availability: Boolean
 });
 
