@@ -14,10 +14,6 @@ class AlarmList extends React.Component {
 		};
 	}
 
-	handleClickModify(e) {
-		console.log(e.target.attributes[0].value);
-	}
-
 	handleClickRemove(e) {
 		let key = e.target.attributes[0].value;
 		if (confirm(`${key}를 삭제합니다.`)) {
@@ -76,7 +72,6 @@ class AlarmList extends React.Component {
 								<span style={timeStyle}>{alarm.hour}시 {alarm.minute}분</span>
 								<span style={dayOfWeekStyle}>{indexToDay(alarm.dayOfWeek)}</span>
 								<i {..._id} onClick={this.handleClickRemove} className="right material-icons">delete</i>
-								<i {..._id} onClick={this.handleClickModify} className="right material-icons">settings</i>
 							</div>
 						</li>
 					</ul>
