@@ -77,7 +77,6 @@ class AlarmRegisterForm extends React.Component {
 	render() {
 		const mapToHourComponent = (hourArray, flag) => {
 			return hourArray.map((hour, i) => {
-				console.log(hour);
 				return (<option value={hour} key={i}>{hour} 시</option>)
 			});
 		};

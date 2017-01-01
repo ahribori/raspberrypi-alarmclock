@@ -120,6 +120,7 @@ export default class Alarm {
 			this.delayTimeout = setTimeout(() => {
 				this.play();
 			}, 1000 * 60 * minute);
+			console.log(`알람이 ${minute}분 뒤로 연기되었습니다.`);
 		} else {
 			console.warn('Cannot delay. Cause current state is', this.state);
 		}
