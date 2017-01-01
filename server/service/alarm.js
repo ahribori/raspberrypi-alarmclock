@@ -8,11 +8,9 @@ const spawn = childProcess.spawn;
 export default class Alarm {
 
 	constructor() {
-		this.getAlarm();
 		this.state = 'LOADING';
 		this.setRandomMusic(() => {
 			this.state = 'STOPPED';
-			this.alarm = {};
 			this.setAlarm();
 		});
 		/*
@@ -34,21 +32,18 @@ export default class Alarm {
 		this.scheduleList.map((registeredSchedule) => {
 			registeredSchedule.cancel();
 		});
-		if(this.alarm.cancel) {
-			this.alarm.cancel();
-		}
 		this.getAlarm((err, alarmList) => {
 			alarmList.map((alarm, key) => {
 				let rule = '0 ';
 				rule += alarm.minute + ' ';
 				rule += alarm.hour + ' * * ';
-				rule += alarm.dayOfWeek;
-				this.scheduleList.push(
-					schedule.scheduleJob(rule, () => {
-						console.log('현재 시각은', new Date());
-						this.play();
-					})
-				);
+				rule += alarm.dayOfWeek.sort();
+
+				let createJob = schedule.scheduleJob(rule, () => {
+					console.log('현재 시각은', new Date());
+					this.play();
+				});
+				this.scheduleList.push(createJob);
 				const parsedDay = [];
 				alarm.dayOfWeek.map((day) => {
 					parsedDay.push(DAY[day]);
@@ -70,6 +65,7 @@ export default class Alarm {
 			if (err) {
 				console.error(err);
 			} else {
+				this.setAlarm();
 				console.log(results);
 			}
 		});
@@ -89,6 +85,7 @@ export default class Alarm {
 				}
 				throw new Error(err);
 			} else {
+				this.setAlarm();
 				if (typeof callback === 'function') {
 					callback(null, result);
 				}

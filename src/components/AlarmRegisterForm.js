@@ -16,14 +16,13 @@ class AlarmRegisterForm extends React.Component {
 			form: {
 				hour: 0,
 				minute: 0,
-				dayOfWeek: [1, 2, 3, 4, 5, 6, 7]
+				dayOfWeek: [0, 1, 2, 3, 4, 5, 6]
 			}
 		};
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	handleSubmit() {
-		console.log(this.state.form);
 		axios.post('/alarm', this.state.form)
 			.then((response) => {
 				location.reload(true);
@@ -113,14 +112,14 @@ class AlarmRegisterForm extends React.Component {
 						<label>분</label>
 					</div>
 					<div className="input-field col s3">
-						<select id="dayOfWeekDropdown" multiple defaultValue={[1,2,3,4,5,6,7]}>
+						<select id="dayOfWeekDropdown" multiple defaultValue={[1,2,3,4,5,6,0]}>
 							<option value="1">월</option>
 							<option value="2">화</option>
 							<option value="3">수</option>
 							<option value="4">목</option>
 							<option value="5">금</option>
 							<option value="6">토</option>
-							<option value="7">일</option>
+							<option value="0">일</option>
 						</select>
 						<label>요일</label>
 					</div>

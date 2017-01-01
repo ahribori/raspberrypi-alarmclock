@@ -14,6 +14,27 @@ class AlarmList extends React.Component {
 		};
 	}
 
+	handleClickModify(e) {
+		console.log(e.target.attributes[0].value);
+	}
+
+	handleClickRemove(e) {
+		let key = e.target.attributes[0].value;
+		if (confirm(`${key}를 삭제합니다.`)) {
+			axios.delete('/alarm', {
+				data: {
+					key
+				}
+			})
+				.then((response) => {
+					location.reload(true);
+				})
+				.catch((err) => {
+					console.error(err);
+				});
+		}
+	}
+
 	componentDidMount() {
 		axios.get('/alarm')
 			.then((response) => {
@@ -24,7 +45,6 @@ class AlarmList extends React.Component {
 			.catch((err) => {
 				console.error(err);
 			});
-		console.log('mㅎ')
 	}
 
 	render() {
@@ -34,14 +54,6 @@ class AlarmList extends React.Component {
 
 		const dayOfWeekStyle = {
 			'marginLeft': '20px'
-		};
-
-		const buttonZoneStyle = {
-			'padding': '10px'
-		};
-
-		const buttonStyle = {
-			'marginLeft': '5px'
 		};
 
 		const dayMap = ['일', '월', '화', '수', '목', '금', '토', '일'];
@@ -54,16 +66,17 @@ class AlarmList extends React.Component {
 
 		const mapToComponent = (data) => {
 			return data.map((alarm, i) => {
+				let _id = {
+					'data-id': alarm._id
+				};
 				return (
-					<ul className="collapsible popout" data-collapsible="accordion" key={i}>
+					<ul className="collapsible" data-collapsible="accordion" key={i}>
 						<li>
 							<div className="collapsible-header"><i className="material-icons">schedule</i>
 								<span style={timeStyle}>{alarm.hour}시 {alarm.minute}분</span>
 								<span style={dayOfWeekStyle}>{indexToDay(alarm.dayOfWeek)}</span>
-							</div>
-							<div className="collapsible-body" style={buttonZoneStyle}>
-								<a className="waves-effect waves-light btn orange darken-1" style={buttonStyle}><i className="material-icons left">settings</i>수정</a>
-								<a className="waves-effect waves-light btn red darken-1" style={buttonStyle}><i className="material-icons left">delete</i>삭제</a>
+								<i {..._id} onClick={this.handleClickRemove} className="right material-icons">delete</i>
+								<i {..._id} onClick={this.handleClickModify} className="right material-icons">settings</i>
 							</div>
 						</li>
 					</ul>

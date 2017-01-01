@@ -16,6 +16,12 @@ router.post('/alarm', (req, res) => {
 	res.json('success');
 });
 
+router.delete('/alarm', (req, res) => {
+	let body = req.body;
+	alarm.deleteAlarm(body.key);
+	res.json('success');
+});
+
 router.get('/play', (req, res) => {
 	alarm.play();
 	res.json('success!');
