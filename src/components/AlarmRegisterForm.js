@@ -35,7 +35,7 @@ class AlarmRegisterForm extends React.Component {
 	componentWillMount() {
 		let hourArray = [];
 		let minuteArray = [];
-		for (let j = 1; j <13; j++) {
+		for (let j = 0; j <24; j++) {
 			hourArray.push(j);
 		}
 		for (let i = 0; i < 60; i++) {
@@ -76,15 +76,10 @@ class AlarmRegisterForm extends React.Component {
 
 	render() {
 		const mapToHourComponent = (hourArray, flag) => {
-			if (flag === 'am') {
-				return hourArray.map((hour, i) => {
-					return (<option value={hour} key={i}>오전 {hour} 시</option>)
-				});
-			} else if (flag === 'pm') {
-				return hourArray.map((hour, i) => {
-					return (<option value={hour + 12} key={i}>오후 {hour} 시</option>)
-				});
-			}
+			return hourArray.map((hour, i) => {
+				console.log(hour);
+				return (<option value={hour} key={i}>{hour} 시</option>)
+			});
 		};
 
 		const mapToMinuteComponent = (minuteArray) => {
@@ -97,10 +92,9 @@ class AlarmRegisterForm extends React.Component {
 			<div className="container">
 				<div className="row">
 					<div className="input-field col s3">
-						<select id="hourDropdown" defaultValue="1" onClick={this.handleHourChange}>
+						<select id="hourDropdown" defaultValue="9" onClick={this.handleHourChange}>
 							<option value="" disabled>Choose your option</option>
-							{mapToHourComponent(this.state.hour, 'am')}
-							{mapToHourComponent(this.state.hour, 'pm')}
+							{mapToHourComponent(this.state.hour)}
 						</select>
 						<label>시</label>
 					</div>
