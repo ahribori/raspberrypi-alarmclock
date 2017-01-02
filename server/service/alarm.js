@@ -139,8 +139,6 @@ export default class Alarm {
 				state: this.state,
 				remainTime: remainTime
 			};
-		} else {
-			console.warn('Cannot get remain time. Cause current state is', this.state);
 		}
 	}
 
@@ -203,16 +201,18 @@ export default class Alarm {
 			case 'PLAYING':
 				console.log('Stop!', new Date());
 				this.omxplayer.stdin.write('q');
+				console.log(`[${this.state}] => [STOPPED]`);
+				this.state = 'STOPPED';
 				break;
 			case 'WAITING':
 				console.log('Stop!', new Date());
 				this.clearDelayTimeout();
+				console.log(`[${this.state}] => [STOPPED]`);
+				this.state = 'STOPPED';
 				break;
 			case 'STOPPED':
 				console.warn('Cannot stop. Cause current state is', this.state);
 		}
-		console.log(`[${this.state}] => [STOPPED]`);
-		this.state = 'STOPPED';
 	}
 
 	clearDelayTimeout() {
