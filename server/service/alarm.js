@@ -10,6 +10,7 @@ export default class Alarm {
 	constructor() {
 		this.state = 'LOADING';
 		this.setRandomMusic(() => {
+			console.log(`[${this.state}] => [STOPPED]`);
 			this.state = 'STOPPED';
 			this.setAlarm();
 		});
@@ -113,6 +114,7 @@ export default class Alarm {
 				return;
 			}
 			this.stop();
+			console.log(`[${this.state}] => [WAITING]`);
 			this.state = 'WAITING';
 			this.delayTime = minute;
 			this.delayStartedTime = Date.now();
@@ -150,6 +152,7 @@ export default class Alarm {
 
 		this.omxplayer.on('close', (code) => {
 			console.log('[onClose]', code);
+			console.log(`[${this.state}] => [STOPPED]`);
 			this.state = 'STOPPED';
 		});
 
@@ -183,9 +186,10 @@ export default class Alarm {
 			this.setRandomMusic(() => {
 				this.clearDelayTimeout();
 				console.log('Play!', this.music, new Date());
+				console.log(`[${this.state}] => [PLAYING]`);
 				this.state = 'PLAYING';
-				this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
-				this.addListener();
+				// this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
+				// this.addListener();
 			});
 		} else {
 			console.warn('Cannot play. Cause current state is', this.state);
@@ -196,8 +200,9 @@ export default class Alarm {
 		if (this.state !== 'STOPPED') {
 			console.log('Stop!', new Date());
 			this.clearDelayTimeout();
+			console.log(`[${this.state}] => [STOPPED]`);
 			this.state = 'STOPPED';
-			this.omxplayer.stdin.write('q');
+			// this.omxplayer.stdin.write('q');
 		} else {
 			console.warn('Cannot stop. Cause current state is', this.state);
 		}
