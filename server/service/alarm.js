@@ -204,7 +204,9 @@ export default class Alarm {
 			this.clearDelayTimeout();
 			console.log(`[${this.state}] => [STOPPED]`);
 			this.state = 'STOPPED';
-			this.omxplayer.stdin.write('q');
+			if (this.state !== 'WAITING') {
+				this.omxplayer.stdin.write('q');
+			}
 		} else {
 			console.warn('Cannot stop. Cause current state is', this.state);
 		}
