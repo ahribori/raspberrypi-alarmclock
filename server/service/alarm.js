@@ -71,10 +71,6 @@ export default class Alarm {
 		});
 	}
 
-	updateAlarm() {
-
-	}
-
 	deleteAlarm(key) {
 		AlarmModel.remove({
 			_id: key
@@ -117,12 +113,32 @@ export default class Alarm {
 				return;
 			}
 			this.stop();
+			this.state = 'WAITING';
+			this.delayTime = minute;
+			this.delayStartedTime = Date.now();
 			this.delayTimeout = setTimeout(() => {
 				this.play();
 			}, 1000 * 60 * minute);
 			console.log(`알람이 ${minute}분 뒤로 연기되었습니다.`);
 		} else {
 			console.warn('Cannot delay. Cause current state is', this.state);
+		}
+		return {
+			state: this.state
+		}
+	}
+
+	getRemainTime() {
+		if (this.state === 'WAITING') {
+			let remainMillisecond = (1000 * 60 * this.delayTime) - (Date.now() - this.delayStartedTime);
+			let remainSecond = Math.round(remainMillisecond / 1000);
+			let remainTime = `${Math.floor(remainSecond / 60)}분 ${remainSecond % 60}`;
+			return {
+				state: this.state,
+				remainTime: remainTime
+			};
+		} else {
+			console.warn('Cannot get remain time. Cause current state is', this.state);
 		}
 	}
 
@@ -165,6 +181,7 @@ export default class Alarm {
 	play() {
 		if (this.state !== ('PLAYING' || 'LOADING')) {
 			this.setRandomMusic(() => {
+				this.clearDelayTimeout();
 				console.log('Play!', this.music, new Date());
 				this.state = 'PLAYING';
 				this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
@@ -178,16 +195,20 @@ export default class Alarm {
 	stop() {
 		if (this.state !== 'STOPPED') {
 			console.log('Stop!', new Date());
+			this.clearDelayTimeout();
 			this.state = 'STOPPED';
 			this.omxplayer.stdin.write('q');
 		} else {
-			if(typeof this.delayTimeout === 'object' && this.delayTimeout._idleTimeout > -1) {
-				clearTimeout(this.delayTimeout);
-				console.log('DelayTimeout cleared.');
-			}
 			console.warn('Cannot stop. Cause current state is', this.state);
 		}
 
+	}
+
+	clearDelayTimeout() {
+		if(this.state === 'WAITING' && typeof this.delayTimeout === 'object' && this.delayTimeout._idleTimeout > -1) {
+			clearTimeout(this.delayTimeout);
+			console.log('DelayTimeout cleared.');
+		}
 	}
 
 	volumeUp() {
