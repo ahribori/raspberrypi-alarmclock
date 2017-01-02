@@ -175,13 +175,13 @@ export default class Alarm {
 			} else {
 				throw new Error('musics folder is empty.');
 			}
+			if (typeof callback === 'function') {
+				callback();
+			}
 		});
-		if (typeof callback === 'function') {
-			callback();
-		}
 	}
 
-	play() {
+	play(callback) {
 		if (this.state !== ('PLAYING' || 'LOADING')) {
 			this.setRandomMusic(() => {
 				this.clearDelayTimeout();
@@ -190,13 +190,25 @@ export default class Alarm {
 				this.state = 'PLAYING';
 				this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
 				this.addListener();
+				if (typeof callback === 'function') {
+					callback({
+						state: this.state,
+						music: this.music
+					});
+				}
 			});
 		} else {
 			console.warn('Cannot play. Cause current state is', this.state);
+			if (typeof callback === 'function') {
+				callback({
+					state: this.state,
+					music: this.music
+				});
+			}
 		}
 	}
 
-	stop() {
+	stop(callback) {
 		switch (this.state) {
 			case 'PLAYING':
 				console.log('Stop!', new Date());
@@ -212,6 +224,11 @@ export default class Alarm {
 				break;
 			case 'STOPPED':
 				console.warn('Cannot stop. Cause current state is', this.state);
+		}
+		if (typeof callback === 'function') {
+			callback({
+				state: this.state
+			});
 		}
 	}
 

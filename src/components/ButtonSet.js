@@ -1,4 +1,5 @@
 import React, {Component, PropTypes} from 'react';
+import update from 'react-addons-update';
 import axios from 'axios';
 
 const propTypes = {};
@@ -10,6 +11,8 @@ class ButtonSet extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			state: '',
+			music: '',
 			remainTime: undefined
 		};
 		this.play = this.play.bind(this);
@@ -23,7 +26,11 @@ class ButtonSet extends React.Component {
 	play() {
 		axios.get('/play')
 			.then((response) => {
-				console.log(response);
+				this.setState(update(this.state, {
+					state: { $set: response.data.state },
+					music: { $set: response.data.music }
+				}));
+				console.log(this.state);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -33,7 +40,11 @@ class ButtonSet extends React.Component {
 	stop() {
 		axios.get('/stop')
 			.then((response) => {
-				console.log(response);
+				this.setState(update(this.state, {
+					state: { $set: response.data.state },
+					music: { $set: '' }
+				}));
+				console.log(this.state);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -43,7 +54,11 @@ class ButtonSet extends React.Component {
 	delay() {
 		axios.get('/delay')
 			.then((response) => {
-				console.log(response);
+				this.setState(update(this.state, {
+					state: { $set: response.data.state },
+					music: { $set: '' }
+				}));
+				console.log(this.state);
 				if (response.data.state === 'WAITING') {
 					this.getRemainTime();
 				}
@@ -97,10 +112,10 @@ class ButtonSet extends React.Component {
 					<h5 className="white-text">해제</h5>
 				</div>
 				<div className="card-panel pink darken-1" onClick={this.delay}>
-					<h5 className="white-text">연기 {this.state.remainTime !== undefined ? `(${this.state.remainTime}초 남음)` : ''}</h5>
+					<h5 className="white-text">연기 {this.state.state === 'WAITING' && this.state.remainTime !== undefined ? `(${this.state.remainTime}초 남음)` : ''}</h5>
 				</div>
 				<div className="card-panel purple darken-1" onClick={this.play}>
-					<h5 className="white-text">재생</h5>
+					<h5 className="white-text">{this.state.state === 'PLAYING' ? `${this.state.music} 재생중♬` : '재생'}</h5>
 				</div>
 			</div>
 		);

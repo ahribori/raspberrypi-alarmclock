@@ -23,13 +23,15 @@ router.delete('/alarm', (req, res) => {
 });
 
 router.get('/play', (req, res) => {
-	alarm.play();
-	res.json('success!');
+	alarm.play((data) => {
+		res.json(data);
+	})
 });
 
 router.get('/stop', (req, res) => {
-	alarm.stop();
-	res.json('success!');
+	alarm.stop((data) => {
+		res.json(data);
+	});
 });
 
 router.get('/getRemainTime', (req, res) => {
