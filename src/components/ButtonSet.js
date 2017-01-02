@@ -21,6 +21,7 @@ class ButtonSet extends React.Component {
 		this.volumeUp = this.volumeUp.bind(this);
 		this.volumeDown = this.volumeDown.bind(this);
 		this.getRemainTime = this.getRemainTime.bind(this);
+		this.getState = this.getState.bind(this);
 	}
 
 	play() {
@@ -103,6 +104,25 @@ class ButtonSet extends React.Component {
 					console.error(err);
 				});
 		}, 3000);
+	}
+	
+	getState() {
+		axios.get('/getState')
+			.then((response) => {
+				this.setState(update(this.state, {
+					state: {$set: response.data.state},
+					music: {$set: response.data.music},
+					remainTime: {$set: response.data.remainTime}
+					}
+				));
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	}
+
+	componentDidMount() {
+		this.getState();
 	}
 
 	render() {

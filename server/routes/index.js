@@ -34,8 +34,16 @@ router.get('/stop', (req, res) => {
 	});
 });
 
+router.get('/delay', (req, res) => {
+	res.json(alarm.delay(10));
+});
+
 router.get('/getRemainTime', (req, res) => {
 	res.json(alarm.getRemainTime());
+});
+
+router.get('/getState', (req, res) => {
+	res.json(alarm.getState());
 });
 
 router.get('/volumeUp', (req, res) => {
@@ -48,8 +56,5 @@ router.get('/volumeDown', (req, res) => {
 	res.json('success!');
 });
 
-router.get('/delay', (req, res) => {
-	res.json(alarm.delay(10));
-});
 
 export default router;

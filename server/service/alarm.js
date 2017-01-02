@@ -134,11 +134,19 @@ export default class Alarm {
 		if (this.state === 'WAITING') {
 			let remainMillisecond = (1000 * 60 * this.delayTime) - (Date.now() - this.delayStartedTime);
 			let remainSecond = Math.round(remainMillisecond / 1000);
-			let remainTime = `${Math.floor(remainSecond / 60)}분 ${remainSecond % 60}`;
+			this.remainTime = `${Math.floor(remainSecond / 60)}분 ${remainSecond % 60}`;
 			return {
 				state: this.state,
-				remainTime: remainTime
+				remainTime: this.remainTime
 			};
+		}
+	}
+	
+	getState() {
+		return {
+			state: this.state,
+			remainTime: this.remainTime,
+			music: this.music
 		}
 	}
 
