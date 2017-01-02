@@ -152,8 +152,10 @@ export default class Alarm {
 
 		this.omxplayer.on('close', (code) => {
 			console.log('[onClose]', code);
-			console.log(`[${this.state}] => [STOPPED]`);
-			this.state = 'STOPPED';
+			if (this.state !== 'WAITING') {
+				console.log(`[${this.state}] => [STOPPED]`);
+				this.state = 'STOPPED';
+			}
 		});
 
 		// this.omxplayer.on('disconnect', (code, signal) => {
