@@ -199,18 +199,20 @@ export default class Alarm {
 	}
 
 	stop() {
-		if (this.state !== 'STOPPED') {
-			console.log('Stop!', new Date());
-			this.clearDelayTimeout();
-			console.log(`[${this.state}] => [STOPPED]`);
-			this.state = 'STOPPED';
-			if (this.state !== 'WAITING') {
+		switch (this.state) {
+			case 'PLAYING':
+				console.log('Stop!', new Date());
 				this.omxplayer.stdin.write('q');
-			}
-		} else {
-			console.warn('Cannot stop. Cause current state is', this.state);
+				break;
+			case 'WAITING':
+				console.log('Stop!', new Date());
+				this.clearDelayTimeout();
+				break;
+			case 'STOPPED':
+				console.warn('Cannot stop. Cause current state is', this.state);
 		}
-
+		console.log(`[${this.state}] => [STOPPED]`);
+		this.state = 'STOPPED';
 	}
 
 	clearDelayTimeout() {
