@@ -188,8 +188,8 @@ export default class Alarm {
 				console.log('Play!', this.music, new Date());
 				console.log(`[${this.state}] => [PLAYING]`);
 				this.state = 'PLAYING';
-				// this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
-				// this.addListener();
+				this.omxplayer = spawn('omxplayer', [process.cwd() + '/musics/' + this.music, '--loop']);
+				this.addListener();
 			});
 		} else {
 			console.warn('Cannot play. Cause current state is', this.state);
@@ -202,7 +202,7 @@ export default class Alarm {
 			this.clearDelayTimeout();
 			console.log(`[${this.state}] => [STOPPED]`);
 			this.state = 'STOPPED';
-			// this.omxplayer.stdin.write('q');
+			this.omxplayer.stdin.write('q');
 		} else {
 			console.warn('Cannot stop. Cause current state is', this.state);
 		}
