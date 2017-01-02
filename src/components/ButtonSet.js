@@ -110,11 +110,14 @@ class ButtonSet extends React.Component {
 		axios.get('/getState')
 			.then((response) => {
 				this.setState(update(this.state, {
-					state: {$set: response.data.state},
-					music: {$set: response.data.music},
-					remainTime: {$set: response.data.remainTime}
+						state: {$set: response.data.state},
+						music: {$set: response.data.music},
+						remainTime: {$set: response.data.remainTime}
 					}
 				));
+				if (response.data.state === 'WAITING') {
+					this.getRemainTime();
+				}
 			})
 			.catch((err) => {
 				console.error(err);
