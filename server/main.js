@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 const app = express();
 const port = 3000;
 const devServerPort = 4000;
+const mongoURI = process.env.MONGO_URI || 'mongodb://192.168.0.50:27017/raspberrypi';
 
 /* MongoDB Connection */
 const db = mongoose.connection;
@@ -17,7 +18,7 @@ db.once('open', () => {
 	console.log('Connected to mongodb server');
 });
 
-mongoose.connect('mongodb://192.168.0.200:27017/raspberrypi');
+mongoose.connect(mongoURI);
 
 /* Use Session */
 // app.use(session({
