@@ -53,6 +53,9 @@ class ButtonSet extends React.Component {
 	}
 
 	delay() {
+		this.setState({
+			remainTime: '10분 0'
+		});
 		axios.get('/delay')
 			.then((response) => {
 				this.setState(update(this.state, {
@@ -96,6 +99,7 @@ class ButtonSet extends React.Component {
 					this.setState({
 						remainTime: response.data.remainTime
 					});
+					console.log(this.state)
 					if (response.data.state === 'WAITING') {
 						this.getRemainTime();
 					}
