@@ -221,23 +221,33 @@ export default class Alarm {
 			case 'PLAYING':
 				console.log('Stop!', new Date());
 				this.omxplayer.stdin.write('q');
+				this.forceKillOmxPlayer();
 				console.log(`[${this.state}] => [STOPPED]`);
 				this.state = 'STOPPED';
 				break;
 			case 'WAITING':
 				console.log('Stop!', new Date());
 				this.clearDelayTimeout();
+				this.forceKillOmxPlayer();
 				console.log(`[${this.state}] => [STOPPED]`);
 				this.state = 'STOPPED';
 				break;
 			case 'STOPPED':
 				console.warn('Cannot stop. Cause current state is', this.state);
 		}
+
 		if (typeof callback === 'function') {
 			callback({
 				state: this.state
 			});
 		}
+	}
+
+	forceKillOmxPlayer() {
+		const omxPlayerForceKillCommand = "sudo kill $(ps aux |awk '/omx/ {print $2}')";
+		childProcess.exec(omxPlayerForceKillCommand, (error, stdout, stderr) => {
+			console.log("Execute sudo kill $(ps aux |awk '/omx/ {print $2}')");
+		});
 	}
 
 	clearDelayTimeout() {
