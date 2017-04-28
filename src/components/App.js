@@ -21,10 +21,14 @@ class App extends React.Component {
 		const sdk = window.AHRIBORI_AUTH_SDK;
 
 		sdk.checkToken({
-			success: () => {
-				this.setState({
-					auth: true
-				})
+			success: (user) => {
+				if (user.info.admin) {
+					this.setState({
+						auth: true
+					})
+				} else {
+					alert('권한이 없는 사용자 입니다');
+				}
 			},
 			fail: () => {
 				this.setState({
@@ -36,10 +40,14 @@ class App extends React.Component {
 		sdk.createLoginButton({
 			container: '#ahribori_auth',
 			size: 'large',
-			success: () => {
-				this.setState({
-					auth: true
-				})
+			success: (authObj) => {
+				if (authObj.auth.user.admin) {
+					this.setState({
+						auth: true
+					})
+				} else {
+					alert('권한이 없는 사용자 입니다');
+				}
 			},
 			logout: () => {
 				this.setState({
@@ -72,11 +80,11 @@ class App extends React.Component {
 						</div>
 					</div>
 				</div>
+				{ this.state.auth ? alarmInterface : '' }
 				<div id="ahribori_auth" style={{
-					margin: '10px',
+					margin: '50px',
 					textAlign: 'center'
 				}}></div>
-				{ this.state.auth ? alarmInterface : '' }
 			</div>
 		);
 	}
